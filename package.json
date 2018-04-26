@@ -14,7 +14,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "webpack --config webpack.config.js -w",
-    "build": "WEBPACK_MODE=production webpack --config webpack.config.js"
+    "build": "WEBPACK_MODE=production webpack --config webpack.config.js",
+    "lint": "eslint test/**/*.js src/**/*.js"
   },
   "repository": {
     "type": "git",
@@ -26,5 +27,8 @@
     "url": "https://github.com/ifanrx/plugin-license-sdk/issues"
   },
   "homepage": "https://github.com/ifanrx/plugin-license-sdk#readme",
-  "dependencies": {}
+  "dependencies": {
+    "node.extend": "^2.0.0",
+    "rsvp": "^4.8.2"
+  }
 }
