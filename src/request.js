@@ -1,5 +1,4 @@
 import Plugin from './plugin'
-import constants from './constants'
 import {Promise} from 'rsvp'
 import utils from './utils'
 import extend from 'node.extend'
@@ -20,9 +19,20 @@ const setHeader = (header) => {
   return extend(header, extendHeader)
 }
 
-const request = ({ url, method = 'GET', data = {}, header = {}, dataType = 'json' }) => {
+function calculateSignature() {
+  // ENCODED_LICENSE = BASE64(json_encode(license))
+  // X-MiniApp-Plugin-Signature: {'appid': $APPID, 'license': ENCODED_LICENSE, 'nonce': $EIGHT_BYTE_RANDOM_STRING, 'signature': SHA256( sprintf("%s%s%s%s", APPID, ENCODED_LICENSE, APP_SECRET, EIGHT_BYTE_RANDOM_STRING) )}
+
+}
+
+export default function request({url, method = 'GET', data = {}, header = {}, dataType = 'json', isInnerRequest = false},) {
   return new Promise((resolve, reject) => {
 
+    if (isInnerRequest) {
+      // 内置请求不计算 X-MiniApp-Plugin-Signature
+    } else {
+      //
+    }
     let headers = setHeader(header)
 
     if (!/https:\/\//.test(url)) {
@@ -36,9 +46,6 @@ const request = ({ url, method = 'GET', data = {}, header = {}, dataType = 'json
       header: headers,
       dataType: dataType,
       success: res => {
-        if (res.statusCode == constants.STATUS_CODE.UNAUTHORIZED) {
-          Plugin.clearSession()
-        }
         resolve(res)
       },
       fail: () => {
@@ -49,6 +56,10 @@ const request = ({ url, method = 'GET', data = {}, header = {}, dataType = 'json
   })
 }
 
-export default function makeRequest(Plugin) {
-  Plugin.request = request
+/**
+ * 内置请求
+ * @param args
+ */
+export function innerRequest(args) {
+  return request.call(this, extend(args, {isInnerRequest: true}))
 }

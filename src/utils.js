@@ -4,7 +4,7 @@ import PError from './PError'
 export default {
   wxRequestFail: (reject) => {
     wx.getNetworkType({
-      success: function(res) {
+      success: function (res) {
         if (res.networkType === 'none') {
           reject(new PError(600)) // 断网
         } else {
@@ -18,7 +18,7 @@ export default {
     let errorMsg = ''
     if (res.statusCode === 404) {
       errorMsg = 'not found'
-    } else  {
+    } else {
       errorMsg = res.data.error_msg || res.data.message || ''
     }
     return errorMsg
@@ -31,5 +31,9 @@ export default {
     get: (key) => {
       return wx.getStorageSync(config.STORAGE_KEY_PREFIX + key)
     }
+  },
+
+  randomString(length = 8) {
+    return Math.random().toString(36).substring(2, 2 + length)
   }
 }

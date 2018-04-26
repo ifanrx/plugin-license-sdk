@@ -6,16 +6,17 @@ module.exports = {
     node: true,
   },
   extends: 'eslint:recommended',
+  parser: 'babel-eslint',
   parserOptions: {
     ecmaVersion: 6,
-    sourceType: "module",
+    sourceType: 'module',
   },
   rules: {
     indent: [
       'error',
       2
     ],
-    "linebreak-style": [
+    'linebreak-style': [
       'error',
       'unix'
     ],
@@ -27,7 +28,7 @@ module.exports = {
       'error',
       'never'
     ],
-    "no-var": [
+    'no-var': [
       'error'
     ]
   },
