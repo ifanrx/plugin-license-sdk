@@ -1,5 +1,12 @@
-import request from './request'
+import {innerRequest} from './request'
+import config from './config'
 
-export default function api(Plugin) {
-  // Plugin.getLicense = request()
+const getLicense = () => {
+  return innerRequest({
+    url: `hserve/license/${config.get('pluginId')}/?appid=${config.get('appId')}`
+  })
+}
+
+export default {
+  getLicense,
 }

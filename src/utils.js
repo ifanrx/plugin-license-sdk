@@ -26,10 +26,10 @@ export default {
 
   storage: {
     set: (key, value) => {
-      wx.setStorageSync(config.STORAGE_KEY_PREFIX + key, value)
+      wx.setStorageSync(config.get('storageKeyPrefix') + key, value)
     },
     get: (key) => {
-      return wx.getStorageSync(config.STORAGE_KEY_PREFIX + key)
+      return wx.getStorageSync(config.get('storageKeyPrefix') + key)
     }
   },
 

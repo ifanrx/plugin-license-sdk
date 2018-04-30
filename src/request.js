@@ -1,7 +1,7 @@
-import Plugin from './plugin'
 import {Promise} from 'rsvp'
 import utils from './utils'
 import extend from 'node.extend'
+import config from './config'
 
 /**
  * 设置请求头
@@ -36,7 +36,7 @@ export default function request({url, method = 'GET', data = {}, header = {}, da
     let headers = setHeader(header)
 
     if (!/https:\/\//.test(url)) {
-      url = Plugin._config.API_HOST + url
+      url = config.get('API_HOST') + url
     }
 
     wx.request({
