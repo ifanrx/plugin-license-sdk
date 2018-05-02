@@ -34,7 +34,7 @@ class License {
     })
   }
 
-  get updateAt() {
+  get _updateAt() {
     return parseInt(utils.storage.get(constants.LAST_FETCH_TIME))
   }
 

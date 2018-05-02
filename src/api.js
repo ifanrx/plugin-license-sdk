@@ -21,7 +21,7 @@ export function reportUsage() {
     url: `hserve/license/${config.get('pluginId')}/launch/?appid=${config.get('appId')}`,
     data: {
       release: config.version,
-      device: wx.getSystemInfo(),
+      device: wx.getSystemInfoSync(),
     }
   })
 }
