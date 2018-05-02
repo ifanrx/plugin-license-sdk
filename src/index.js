@@ -4,6 +4,7 @@ import {defer} from 'promise-light'
 import config from './config'
 import utils from './utils'
 import constants from './constants'
+import {reportUsage} from './api'
 
 const thirtyMinutesToSeconds = 30 * 60
 let initiated = false
@@ -39,7 +40,7 @@ class PluginSDK {
     if (!storageLicense) {
       p = license.getLicenceFromServer()
     }
-    return p.then(() => this._isReachNextCheck().then(() => this.deferred.resolve()))
+    return p.then(() => reportUsage()).then(() => this._isReachNextCheck().then(() => this.deferred.resolve()))
   }
 
   /**
