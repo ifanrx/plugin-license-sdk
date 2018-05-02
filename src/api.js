@@ -5,7 +5,7 @@ import config from './config'
  * 获取插件信息
  * @returns {*}
  */
-export function getLicence() {
+export function getLicense() {
   return innerRequest({
     url: `hserve/license/${config.get('pluginId')}/?appid=${config.get('appId')}`
   })

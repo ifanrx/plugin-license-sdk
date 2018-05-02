@@ -6,7 +6,7 @@ import request, {calculateSignature, innerRequest} from '../src/request'
 import utils from '../src/utils'
 import testConfig from './test-config'
 import * as API from '../src/api'
-import licence from '../src/license'
+import license from '../src/license'
 const noop = new Function()
 
 let localStorageStore = {}
@@ -44,7 +44,7 @@ sinon.stub(API, 'reportUsage').resolves('')
 let {appId, pluginId, secretKey, version, calculatedSign, randomString} = testConfig
 
 test('#init', t => {
-  let getLicenceStub = sinon.stub(API, 'getLicence').resolves({data: testConfig.license})
+  let getLicenseStub = sinon.stub(API, 'getLicense').resolves({data: testConfig.license})
   return pluginSDK.init({appId, pluginId, secretKey, version}).then(() => {
     return pluginSDK.getLicense()
   }).then(licenseObject => {
@@ -52,7 +52,7 @@ test('#init', t => {
     return pluginSDK.isValid()
   }).then(valid => {
     t.true(valid)
-    getLicenceStub.restore()
+    getLicenseStub.restore()
   })
 })
 

@@ -35,10 +35,10 @@ class PluginSDK {
       config.set(argsList[i], v)
     }
 
-    const storageLicense = license.getLicenceFromStorage()
+    const storageLicense = license.getLicenseFromStorage()
     let p = Promise.resolve()
     if (!storageLicense) {
-      p = license.getLicenceFromServer()
+      p = license.getLicenseFromServer()
     }
     return p.then(() => reportUsage()).then(() => this._isReachNextCheck().then(() => this.deferred.resolve()))
   }
@@ -66,9 +66,9 @@ class PluginSDK {
   updateLicense() {
     return this.deferred.promise.then(() => {
       if ((this._license._updateAt + this._license.cool_down) > new Date().getTime()) { // 根据 cool down 避免高频调用
-        license.getLicenceFromStorage()
+        license.getLicenseFromStorage()
       } else {
-        return license.getLicenceFromServer()
+        return license.getLicenseFromServer()
       }
     })
   }
@@ -103,7 +103,7 @@ class PluginSDK {
   _isReachNextCheck() {
     const now = utils.now()
     if (!!this._license.next_check && parseInt(this._license.next_check) - now <= 0) {
-      return license.getLicenceFromServer()
+      return license.getLicenseFromServer()
     }
     return Promise.resolve(this._license.format())
   }
