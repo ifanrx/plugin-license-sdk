@@ -87,11 +87,12 @@ class PluginSDK {
   }
 
   haveCapability() {
+    return null
 
   }
 
   getUserData() {
-
+    return null
   }
 
   /**
