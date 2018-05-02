@@ -1,4 +1,4 @@
-import config from './config'
+import constants from './constants'
 import PError from './PError'
 
 export default {
@@ -26,14 +26,24 @@ export default {
 
   storage: {
     set: (key, value) => {
-      wx.setStorageSync(config.STORAGE_KEY_PREFIX + key, value)
+      let str = ''
+      if (typeof value === 'object') {
+        str = JSON.stringify(value)
+      } else {
+        str = value.toString()
+      }
+      wx.setStorageSync(constants.STORAGE_PREFIX_KEY + key, str)
     },
     get: (key) => {
-      return wx.getStorageSync(config.STORAGE_KEY_PREFIX + key)
-    }
+      return wx.getStorageSync(constants.STORAGE_PREFIX_KEY + key)
+    },
+    remove: (key) => wx.removeStorageSync(constants.STORAGE_PREFIX_KEY + key)
   },
 
-  randomString(length = 8) {
-    return Math.random().toString(36).substring(2, 2 + length)
+  randomString() {
+    return Math.random().toString(36).substring(2, 10)
+  },
+  now() {
+    return Math.floor(Date.now() / 1000)
   }
 }
