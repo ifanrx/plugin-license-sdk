@@ -5,11 +5,11 @@ module.exports = {
   secretKey: 'test-secretKey',
   randomString: 'abcdefgh',
   license: {
-    'not_before': '$notbefore',
-    'not_after': '$notafter',
-    'next_check': '$nextcheck',
-    'cooldown': '$cooldown',
-    'plan_type': '$plantype',
+    'not_before': 1515244875,
+    'not_after': 1625244875,
+    'next_check': 1695244875,
+    'cooldown': 600,
+    'plan_type': 'FREE',
     'capabilities': ['$cap'],
     'userdata': '$userdata'
   },

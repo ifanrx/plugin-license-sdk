@@ -5,43 +5,56 @@ import constants from '../src/constants'
 import request, {calculateSignature, innerRequest} from '../src/request'
 import utils from '../src/utils'
 import testConfig from './test-config'
-
+import * as API from '../src/api'
+import licence from '../src/license'
 const noop = new Function()
+
+let localStorageStore = {}
+
+test.beforeEach(t => {
+  localStorageStore = {}
+  t.pass()
+})
+
+test.cb.beforeEach(t => {
+  localStorageStore = {}
+  t.end()
+})
 
 // mock
 global.wx = {
   request: noop,
   setStorageSync: noop,
   getStorageSync: noop,
+  removeStorageSync: noop,
 }
+
+sinon.stub(wx, 'getStorageSync').callsFake(function (key) {
+  return localStorageStore[key]
+})
+sinon.stub(wx, 'setStorageSync').callsFake(function (key, value) {
+  localStorageStore[key] = value
+})
+sinon.stub(wx, 'removeStorageSync').callsFake(function (key) {
+  delete  localStorageStore[key]
+})
+
+sinon.stub(API, 'reportUsage').resolves('')
 
 let {appId, pluginId, secretKey, version, calculatedSign, randomString} = testConfig
 
-test.before(() => {
-  pluginSDK.init({appId, pluginId, secretKey, version})
-})
-
-// 第一次初始化，不存在任何的缓存
-test('#first-init', t => {
-  let localStorageStore = {}
-  let getLicence = sinon.stub(pluginSDK, 'getLicence').resolves('asdasd')
-
-  let getStub = sinon.stub(wx, 'getStorageSync').callsFake(function (key) {
-    return localStorageStore[key]
+test('#init', t => {
+  let getLicenceStub = sinon.stub(API, 'getLicence').resolves({data: testConfig.license})
+  return pluginSDK.init({appId, pluginId, secretKey, version}).then(() => {
+    return pluginSDK.getLicense()
+  }).then(licenseObject => {
+    t.deepEqual(licenseObject, testConfig.license)
+    return pluginSDK.isValid()
+  }).then(valid => {
+    t.true(valid)
+    getLicenceStub.restore()
   })
-
-  let requestStub = sinon.stub(wx, 'request').callsFake(function ({header}) {
-
-  })
-
-  t.pass()
 })
-
-// 初始化，无权限
-test('#init-failed', t => {
-  t.pass()
-})
-
 
 // 测试请求发送， header 添加 SIGNATURE_KEY
 test.cb('#test-request', t => {
@@ -68,23 +81,12 @@ test.cb('#test-inner-request', t => {
 
 // 测试 localStorage
 test('#test-storage', t => {
-  let localStorageStore = {}
   let storageKey = 'test-key'
   let storageValue = 'test-value'
-
-  let setStub = sinon.stub(wx, 'setStorageSync').callsFake(function (key, value) {
-    localStorageStore[key] = value
-  })
-  let getStub = sinon.stub(wx, 'getStorageSync').callsFake(function (key) {
-    return localStorageStore[key]
-  })
 
   utils.storage.set(storageKey, storageValue)
 
   t.is(utils.storage.get(storageKey), storageValue)
-
-  setStub.restore()
-  getStub.restore()
 })
 
 // 测试同样的数据，前后端计算的密钥是否相同
