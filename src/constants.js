@@ -16,4 +16,9 @@ module.exports = {
     PATCH: 200,
     DELETE: 204,
   },
+  SIGNATURE_KEY: 'X-MiniApp-Plugin-Signature',
+  STORAGE_PREFIX_KEY: 'ifx_plugin_license_',
+  LICENCE_STORAGE_KEY: 'ifx_licence_',
+  LAST_FETCH_TIME: 'ifx_last_fetch_',
+  API_HOST: '',
 }

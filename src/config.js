@@ -1,13 +1,11 @@
 let defaultConfig = {
-  storageKeyPrefix: 'ifx_plugin_license_',
-  API_HOST: '',
   appId: '',
   pluginId: '',
   version: '',
   secretKey: '',
 }
 
-export class Config {
+export class RuntimeConfig {
   constructor() {
     Object.keys(defaultConfig).forEach(key => {
       this[key] = defaultConfig[key]
@@ -23,4 +21,4 @@ export class Config {
   }
 }
 
-export default new Config()
+export default new RuntimeConfig()

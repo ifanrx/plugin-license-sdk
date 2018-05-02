@@ -1,8 +1,7 @@
 import _request from './request'
 import license from './license'
-import {defer, Promise} from 'rsvp'
+import {defer} from 'promise-light'
 import config from './config'
-import api from './api'
 import utils from './utils'
 
 const thirtyMinutesToSeconds = 30 * 60
@@ -28,13 +27,17 @@ class PluginSDK {
     // check cooldown
 
     // check expired
-    const storageLicense =  utils.storage.get('license')
+    const storageLicense = license.getLicenceFromStorage()
+    let p = Promise.resolve()
     if (!storageLicense) {
-      return this._getLicense(true).then(res => this.deferred.resolve())
+      p = license.getLicenceFromServer().then(licenseObject => {
+        this._license.init(licenseObject)
+      })
     } else {
       this._license._init(storageLicense)
-      return this._checkLicense().then(() => this.deferred.resolve())
     }
+
+    return p.then(() => this._checkLicense().then(() => this.deferred.resolve()))
   }
 
   isValid() {
@@ -87,11 +90,7 @@ class PluginSDK {
 
   _getLicense(force = false) {
     if (force) {
-      return api.getLicense().then(res => {
-        this.license._init(res.data)
-        utils.storage.set('license', JSON.stringify(this._license))
-        return this._license
-      })
+      // license
     } else {
       return Promise.resolve(utils.storage.get('license'))
     }
@@ -100,9 +99,9 @@ class PluginSDK {
 
   // 检测是否超过 next check 时间，若超过请求接口
   _checkLicense() {
-    const now = new Date().getTime()
-    if (!!this._license.next_check && this._license.next_check - now <= 0) {
-      return this._getLicense(true)
+    const now = utils.now()
+    if (!!this._license.next_check && parseInt(this._license.next_check) - now <= 0) {
+      return license.getLicenceFromServer()
     }
     return Promise.resolve(this._license)
   }

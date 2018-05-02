@@ -1,12 +1,8 @@
 import {innerRequest} from './request'
 import config from './config'
 
-const getLicense = () => {
+export function getLicence() {
   return innerRequest({
     url: `hserve/license/${config.get('pluginId')}/?appid=${config.get('appId')}`
   })
-}
-
-export default {
-  getLicense,
 }
