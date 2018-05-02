@@ -2,23 +2,12 @@ import Promise from 'promise-light'
 import utils from './utils'
 import config from './config'
 import constants from './constants'
+import license from './license'
 import {btoa} from 'Base64'
 import sha256 from 'hash.js/lib/hash/sha/256'
 
 export function calculateSignature() {
-  let a = {
-    'not_before': '$notbefore',
-    'not_after': '$notafter',
-    'next_check': '$nextcheck',
-    'cooldown': '$cooldown',
-    'plan_type': '$plantype',
-    'capabilities': ['$cap'],
-    'userdata': '$userdata'
-  }
-
-  // ENCODED_LICENSE = BASE64(json_encode(license))
-  // X-MiniApp-Plugin-Signature: {'appid': $APPID, 'license': ENCODED_LICENSE, 'nonce': $EIGHT_BYTE_RANDOM_STRING, 'signature': SHA256( sprintf("%s%s%s%s", APPID, ENCODED_LICENSE, APP_SECRET, EIGHT_BYTE_RANDOM_STRING) )}
-  let encoded = btoa(JSON.stringify(a))
+  let encoded = btoa(JSON.stringify(license.format()))
   let randomSting = utils.randomString()
   let appId = config.appId
   let secretKey = config.secretKey
@@ -41,7 +30,7 @@ export function calculateSignature() {
  * @param dataType
  * @param isInnerRequest 是否为知晓云请求，如果为 true，则不计算 Signature
  */
-export default function request({url, method = 'GET', data = {}, header = {}, dataType = 'json', isInnerRequest = false}) {
+export default function request({url, method = 'GET', data = {}, header = {}, dataType = 'json', complete, isInnerRequest = false}) { // eslint-disable-line
   return new Promise((resolve, reject) => {
 
     if (!isInnerRequest) {
@@ -64,7 +53,8 @@ export default function request({url, method = 'GET', data = {}, header = {}, da
       },
       fail: () => {
         utils.wxRequestFail(reject)
-      }
+      },
+      complete,
     })
 
   })
