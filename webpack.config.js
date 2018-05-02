@@ -1,5 +1,6 @@
 const mode = process.env.WEBPACK_MODE || 'development'
 const pkg = require('./package.json')
+const webpack = require('webpack')
 
 module.exports = {
   mode,
@@ -13,5 +14,10 @@ module.exports = {
       loader: 'babel-loader'
     }]
   },
+  plugins: [
+    new webpack.DefinePlugin({
+      'process.env.version': JSON.stringify(pkg.version),
+    }),
+  ],
   devtool: 'sourcemap',
 }

@@ -36,7 +36,8 @@ export default {
     },
     get: (key) => {
       return wx.getStorageSync(constants.STORAGE_PREFIX_KEY + key)
-    }
+    },
+    remove: (key) => wx.removeStorageSync(constants.STORAGE_PREFIX_KEY + key)
   },
 
   randomString() {

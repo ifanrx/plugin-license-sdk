@@ -16,9 +16,13 @@ module.exports = {
     PATCH: 200,
     DELETE: 204,
   },
+  PARDON_TIME_KEY: 'pardon',
   SIGNATURE_KEY: 'X-MiniApp-Plugin-Signature',
   STORAGE_PREFIX_KEY: 'ifx_plugin_license_',
-  LICENCE_STORAGE_KEY: 'ifx_licence_',
-  LAST_FETCH_TIME: 'ifx_last_fetch_',
+  LICENCE_STORAGE_KEY: 'licence',
+  LAST_FETCH_TIME: 'last_fetch',
   API_HOST: '',
+  PLAN_TYPE: {
+    EVALUATION: 'EVALUATION', FREE: 'FREE', FREEMIUM: 'FREEMIUM', COMMERCIAL: 'COMMERCIAL'
+  }
 }
