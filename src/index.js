@@ -9,7 +9,7 @@ import {reportUsage} from './api'
 const thirtyMinutesToSeconds = 30 * 60
 let initiated = false
 
-class PluginSDK {
+export class PluginSDK {
   constructor() {
     this.deferred = defer()
     this._license = license
@@ -24,7 +24,7 @@ class PluginSDK {
     // 避免重复加载
     if (initiated) return this.deferred.promise
     initiated = true
-    let argsList = ['appId', 'pluginId', 'version', 'secretKey']
+    let argsList = ['appId', 'pluginId', 'secretKey']
 
     for (let i = 0; i < argsList.length; i++) {
       let v = args[argsList[i]]
@@ -118,7 +118,7 @@ class PluginSDK {
     const now = utils.now()
     // 是否是宽限期
     const pardonTime = parseInt(utils.storage.get(constants.PARDON_TIME_KEY))
-    if (this._license.not_after >= now) {
+    if (this._license.notafter >= now) {
       return true
     } else if (!pardonTime) {
       utils.storage.set(constants.PARDON_TIME_KEY, now)
