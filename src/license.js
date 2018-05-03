@@ -2,7 +2,7 @@ import utils from './utils'
 import constants from './constants'
 import * as API from './api'
 
-let licenseKeys = ['notbefore', 'notafter', 'next_check', 'cooldown', 'plan_type', 'capabilities', 'userdata']
+let licenseKeys = ['not_before', 'not_after', 'next_check', 'cooldown', 'plan_type', 'capabilities', 'userdata']
 
 class License {
   updateInstance(license) {
@@ -10,7 +10,7 @@ class License {
       this[key] = license[key]
     })
     const now = utils.now()
-    this._isValid = this.notafter - now >= 0
+    this._isValid = this.not_after - now >= 0
   }
 
 
@@ -27,6 +27,9 @@ class License {
 
   getLicenseFromServer() {
     return API.getLicense().then(res => {
+      if (parseInt(res.statusCode) !== constants.STATUS_CODE.SUCCESS) {
+        throw new Error(res.data)
+      }
       utils.storage.set(constants.LAST_FETCH_TIME, Date.now())
       this.updateInstance(res.data)
       this.saveToStorage(res.data)

@@ -24,7 +24,7 @@ export class PluginSDK {
     // 避免重复加载
     if (initiated) return this.deferred.promise
     initiated = true
-    let argsList = ['appId', 'pluginId', 'secretKey']
+    let argsList = ['appId', 'pluginId', 'secretKey', 'version']
 
     for (let i = 0; i < argsList.length; i++) {
       let v = args[argsList[i]]
@@ -52,7 +52,7 @@ export class PluginSDK {
       // _isValid 是在 License.init() 设置的，需要再次判断缓存中的 no_after || 30 分钟宽限期
       if (this._license._isValid) {
         return this._isReachNextCheck().then(() => {
-          return this._checkExpired()
+          return this._isExpired()
         })
       }
       return false
@@ -114,11 +114,11 @@ export class PluginSDK {
    * @returns {boolean}
    * @private
    */
-  _checkExpired() {
+  _isExpired() {
     const now = utils.now()
     // 是否是宽限期
     const pardonTime = parseInt(utils.storage.get(constants.PARDON_TIME_KEY))
-    if (this._license.notafter >= now) {
+    if (this._license.not_after >= now) {
       return true
     } else if (!pardonTime) {
       utils.storage.set(constants.PARDON_TIME_KEY, now)

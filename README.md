@@ -16,6 +16,7 @@
 | appId | String| 小程序 id |
 | pluginId | String | 插件 id |
 | secretKey | String | 插件密钥 |
+| version | String | 插件版本 |
 
 #### 返回值
 `Promise.<null>`

@@ -32,16 +32,10 @@ export function calculateSignature() {
  */
 export default function request({url, method = 'GET', data = {}, header = {}, dataType = 'json', complete, isInnerRequest = false}) { // eslint-disable-line
   return new Promise((resolve, reject) => {
-
     if (!isInnerRequest) {
       // 内置请求不计算 X-MiniApp-Plugin-Signature
       header = Object.assign(header, {[constants.SIGNATURE_KEY]: calculateSignature()})
     }
-
-    if (!/https:\/\//.test(url)) {
-      url = config.get('API_HOST') + url
-    }
-
     wx.request({
       method: method,
       url: url,

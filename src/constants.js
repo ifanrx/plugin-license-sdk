@@ -21,7 +21,7 @@ module.exports = {
   STORAGE_PREFIX_KEY: 'ifx_plugin_license_',
   LICENSE_STORAGE_KEY: 'license',
   LAST_FETCH_TIME: 'last_fetch',
-  API_HOST: '',
+  API_HOST: 'https://api.xiaoapp.io',
   PLAN_TYPE: {
     EVALUATION: 'EVALUATION', FREE: 'FREE', FREEMIUM: 'FREEMIUM', COMMERCIAL: 'COMMERCIAL'
   }
