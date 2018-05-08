@@ -18,11 +18,6 @@ test.beforeEach(t => {
   t.pass()
 })
 
-test.cb.beforeEach(t => {
-  localStorageStore = {}
-  t.end()
-})
-
 // mock
 global.wx = {
   request: noop,
@@ -43,12 +38,10 @@ sinon.stub(wx, 'removeStorageSync').callsFake(function (key) {
 
 sinon.stub(API, 'reportUsage').resolves('')
 
-let getLicenseStub = sinon.stub(API, 'getLicense')
-
 let {appId, pluginId, secretKey, version} = testConfig
 
-getLicenseStub.onCall(0).resolves({statusCode: 200, data: testConfig.license.normal})
 test.serial('#init:normal', t => {
+  sinon.stub(API, 'getLicense').resolves({statusCode: 200, data: testConfig.license.normal})
   return pluginSDK.init({appId, pluginId, secretKey, version}).then(() => {
     return pluginSDK.getLicense()
   }).then(licenseObject => {
@@ -56,11 +49,12 @@ test.serial('#init:normal', t => {
     return pluginSDK.isValid()
   }).then(valid => {
     t.true(valid)
+    API.getLicense.restore()
   })
 })
 
-getLicenseStub.onCall(1).resolves({statusCode: 200, data: testConfig.license.expired})
-test.serial('#init:expired', t => {
+test.serial('#init:server-return-expired-licence', t => {
+  sinon.stub(API, 'getLicense').resolves({statusCode: 200, data: testConfig.license.expired})
   return pluginSDK.init({appId, pluginId, secretKey, version}).then(() => {
     return pluginSDK.getLicense()
   }).then(licenseObject => {
@@ -68,11 +62,12 @@ test.serial('#init:expired', t => {
     return pluginSDK.isValid()
   }).then(valid => {
     t.false(valid)
+    API.getLicense.restore()
   })
 })
 
-getLicenseStub.onCall(2).resolves({statusCode: 200, data: testConfig.license.normal})
-test.serial('#init:reach_next_check', t => {
+test.serial('#init:licence-cache-reach-next-check', t => {
+  sinon.stub(API, 'getLicense').resolves({statusCode: 200, data: testConfig.license.normal})
   sinon.stub(utils.storage, 'get').withArgs(constants.LICENSE_STORAGE_KEY).returns(JSON.stringify(testConfig.license.reach_next_check))
   return pluginSDK.init({appId, pluginId, secretKey, version}).then(() => {
     return pluginSDK.getLicense()
@@ -81,12 +76,42 @@ test.serial('#init:reach_next_check', t => {
     return pluginSDK.isValid()
   }).then(valid => {
     utils.storage.get.restore()
+    API.getLicense.restore()
     t.true(valid)
   })
 })
 
+test.serial('#expired-during-lifecycle', t => {
+  let licenceObject = testConfig.license.pardon
+  sinon.stub(utils.storage, 'get').withArgs(constants.LICENSE_STORAGE_KEY).returns(JSON.stringify(licenceObject))
+  utils.storage.get.callThrough()
+  return pluginSDK.init({appId, pluginId, secretKey, version}).then(() => {
+    return new Promise(resolve => {
+      setTimeout(() => {
+        resolve(pluginSDK.isValid())
+      }, 2000) // licence 1000 毫秒后过期
+    })
+  }).then((valid) => {
+    t.true(valid)
+    t.true(moment.unix(pluginSDK._license.not_after).isBefore(moment())) // 实际上 license 已经过期了，进入 30 分钟宽限期
+    t.true(moment.unix(utils.storage.get(constants.PARDON_TIME_KEY)).isValid())
+    t.deepEqual(licenceObject, pluginSDK._license.format())
+    utils.storage.get.restore()
+  })
+})
 
-test.serial('#updateLicence:avoid_frequently_call', t => {
+test.serial('#pardon-time-exceed-during-lifecycle', t => {
+  // 这里复用上一个测试的状态
+  constants.PARDON_TIME = 1 // 宽限期设置为 1 秒
+  sinon.stub(utils.storage, 'get').withArgs(constants.PARDON_TIME_KEY).returns(moment().subtract(30, 'minutes').unix())
+  utils.storage.get.callThrough()
+  return pluginSDK.isValid().then(valid => {
+    t.false(valid)
+    utils.storage.get.restore()
+  })
+})
+
+test.serial('#updateLicence:avoid-frequently-call', t => {
   sinon.stub(utils.storage, 'get')
     .withArgs(constants.LICENSE_STORAGE_KEY).returns(JSON.stringify(testConfig.license.normal))
     .withArgs(constants.LAST_FETCH_TIME).returns(moment().valueOf().toString())
@@ -135,6 +160,6 @@ test.serial('#test-inner-request', t => {
 
 
 // 测试随机生成 8 位字符
-test('#random-string', t => {
+test.serial('#random-string', t => {
   t.regex(utils.randomString(), /\w{8}/)
 })

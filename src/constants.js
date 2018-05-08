@@ -17,6 +17,7 @@ module.exports = {
     DELETE: 204,
   },
   PARDON_TIME_KEY: 'pardon',
+  PARDON_TIME: 1800, // 使用中过期，宽限时间
   SIGNATURE_KEY: 'X-MiniApp-Plugin-Signature',
   STORAGE_PREFIX_KEY: 'ifx_plugin_license_',
   LICENSE_STORAGE_KEY: 'license',

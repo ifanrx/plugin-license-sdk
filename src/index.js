@@ -6,8 +6,6 @@ import utils from './utils'
 import constants from './constants'
 import {reportUsage} from './api'
 
-const thirtyMinutesToSeconds = 30 * 60
-
 export class PluginSDK {
   constructor() {
     this.deferred = defer()
@@ -114,13 +112,13 @@ export class PluginSDK {
   _isExpired() {
     const now = utils.now()
     // 是否是宽限期
-    const pardonTime = parseInt(utils.storage.get(constants.PARDON_TIME_KEY))
+    const pardonTime = utils.storage.get(constants.PARDON_TIME_KEY)
     if (this._license.not_after >= now) {
       return true
     } else if (!pardonTime) {
       utils.storage.set(constants.PARDON_TIME_KEY, now)
       return true
-    } else if (pardonTime + thirtyMinutesToSeconds < now) {
+    } else if ((parseInt(pardonTime) || 0) + constants.PARDON_TIME < now) {
       this._license._isValid = false
       utils.storage.remove(constants.PARDON_TIME_KEY)
       return false
