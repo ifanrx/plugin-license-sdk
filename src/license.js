@@ -2,7 +2,7 @@ import utils from './utils'
 import constants from './constants'
 import * as API from './api'
 
-let licenseKeys = ['not_before', 'not_after', 'next_check', 'cooldown', 'plan_type', 'capabilities', 'userdata']
+let licenseKeys = ['not_before', 'not_after', 'next_check', 'cooldown', 'plan_type', 'capabilities', 'userdata', 'status']
 
 class License {
   updateInstance(license) {

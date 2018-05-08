@@ -7,7 +7,6 @@ import constants from './constants'
 import {reportUsage} from './api'
 
 const thirtyMinutesToSeconds = 30 * 60
-let initiated = false
 
 export class PluginSDK {
   constructor() {
@@ -22,8 +21,6 @@ export class PluginSDK {
    */
   init(args) {
     // 避免重复加载
-    if (initiated) return this.deferred.promise
-    initiated = true
     let argsList = ['appId', 'pluginId', 'secretKey', 'version']
 
     for (let i = 0; i < argsList.length; i++) {
@@ -65,7 +62,7 @@ export class PluginSDK {
 
   updateLicense() {
     return this.deferred.promise.then(() => {
-      if ((this._license._updateAt + this._license.cool_down) > new Date().getTime()) { // 根据 cool down 避免高频调用
+      if ((this._license._updateAt + this._license.cooldown) > new Date().getTime()) { // 根据 cool down 避免高频调用
         license.getLicenseFromStorage()
       } else {
         return license.getLicenseFromServer()

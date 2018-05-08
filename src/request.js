@@ -8,14 +8,14 @@ import sha256 from 'hash.js/lib/hash/sha/256'
 
 export function calculateSignature() {
   let encoded = btoa(JSON.stringify(license.format()))
-  let randomSting = utils.randomString()
+  let randomString = utils.randomString()
   let appId = config.appId
   let secretKey = config.secretKey
   let signature = JSON.stringify({
     'appid': appId,
     'license': encoded,
-    'nonce': randomSting,
-    'signature': sha256().update(appId + encoded + secretKey + randomSting).digest('hex')
+    'nonce': randomString,
+    'signature': sha256().update(appId + encoded + secretKey + randomString).digest('hex')
   })
 
   return signature
