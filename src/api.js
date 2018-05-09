@@ -9,10 +9,7 @@ import constants from './constants'
  */
 export function getLicense() {
   return innerRequest({
-    url: `${constants.API_HOST}/hserve/v1/miniapp-plugin/license/${config.get('pluginId')}/`,
-    header: {
-      AppID: config.get('appId')
-    }
+    url: `${constants.API_HOST}/hserve/v1/license/?plugin_appid=${config.get('pluginId')}&appid=${config.get('appId')}`
   })
 }
 
@@ -21,14 +18,6 @@ export function getLicense() {
  * @returns {*}
  */
 export function reportUsage() {
+  // TODO: 上报信息
   return Promise.resolve(true)
-  // return innerRequest({
-  //   method: 'post',
-  //   url: `hserve/license/${config.get('pluginId')}/launch/?appid=${config.get('appId')}`,
-  //   data: {
-  //     release: config.version,
-  //     device: wx.getSystemInfoSync(),
-  //     // sdk_version: process.env.version // TODO: 上报 sdk 版本
-  //   }
-  // })
 }
