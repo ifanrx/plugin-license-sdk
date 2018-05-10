@@ -1,12 +1,33 @@
 # plugin-license-sdk
 
-## 引入
+## 接入
+```js
+// 在插件代码中引入 sdk
+var sdk = require('sdk-v1.0.0.js')
 
-> var sdk = require('sdk-vx.x.x.js')
+// 初始化
+// 插件开发者需要暴露一个初始化接口给用户，用于获取用户的小程序 id
+// sdk 的后续操作必须在 init 操作 resolve 后
+var initPromise = sdk.init({ appId: 'test', pluginId: 'test', secretKey: 'test', version: '1.2.1' })
 
+// 初始化完成，判断用户是否有权限使用插件
+sdk.isValid().then(valid => { console.log(valid) })
+
+// 开发者可以根据需要主动更新 licence
+sdk.updateLicence().then(() => { console.log('success') })
+
+// 获取当前 license 数据
+sdk.getLicence().then(licence => { console.log(licence) })
+
+// 发送请求，开发者可以对请求进行鉴权
+sdk.request().then(res => { console.log(res) }).catch(err => { console.log(err) })
+```
+
+## secret key
+开发者可以在知晓程序插件市场的 [控制台-基本信息](https://minapp.com/plugin/console/#/management/plugin-info/) 找到 secret key
 ## API
 
-### sdk.init({ appId, pluginId, secretKey })
+### sdk.init({ appId, pluginId, secretKey, version })
 初始化 license sdk
 
 #### 参数

@@ -7,7 +7,7 @@ module.exports = {
   secretKey: 'test-secretKey',
   randomString: 'abcdefgh',
   license: {
-    normal: {  // License 正常
+    normal: {
       'not_before': moment().subtract(1, 'days').unix(),
       'not_after': moment().add(1, 'days').unix(),
       'next_check': moment().add(1, 'days').unix(),
@@ -17,7 +17,7 @@ module.exports = {
       'userdata': '$userdata',
       status: 'normal',
     },
-    expired: {  // 已过期
+    expired: {
       'not_before': moment().subtract(1, 'days').unix(),
       'not_after': moment().subtract(1, 'days').unix(),
       'next_check': moment().add(1, 'hour').unix(),
@@ -25,9 +25,9 @@ module.exports = {
       'plan_type': 'FREE',
       'capabilities': ['$cap'],
       'userdata': '$userdata',
-      status: 'new', // 已购买 license 未绑定小程序
+      status: 'new',
     },
-    reach_next_check: { // 未过期，但需要重新拉去数据
+    reach_next_check: { // 未过期，但需要重新拉取数据
       'not_before': moment().subtract(1, 'days').unix(),
       'not_after': moment().add(1, 'days').unix(),
       'next_check': moment().subtract(1, 'days').unix(),
@@ -35,7 +35,7 @@ module.exports = {
       'plan_type': 'FREE',
       'capabilities': ['$cap'],
       'userdata': '$userdata',
-      status: 'normal', // 已购买 license 未绑定小程序
+      status: 'normal',
     },
     get pardon() {
       return {
@@ -46,7 +46,7 @@ module.exports = {
         'plan_type': 'FREE',
         'capabilities': ['$cap'],
         'userdata': '$userdata',
-        status: 'normal', // 已购买 license 未绑定小程序
+        status: 'normal',
       }
     }
   },
