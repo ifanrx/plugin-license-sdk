@@ -24,7 +24,7 @@ sdk.request().then(res => { console.log(res) }).catch(err => { console.log(err) 
 ```
 
 ## secret key
-开发者可以在知晓程序插件市场的 [控制台-基本信息](https://minapp.com/plugin/console/#/management/plugin-info/) 找到 secret key
+开发者可以在知晓程序插件市场的 [控制台-发布管理](https://minapp.com/plugin/console/#/management/publish-plugin/) 找到 secret key
 ## API
 
 ### sdk.init({ appId, pluginId, secretKey, version })
