@@ -20,7 +20,7 @@ sdk.updateLicence().then(() => { console.log('success') })
 sdk.getLicence().then(licence => { console.log(licence) })
 
 // 发送请求，开发者可以对请求进行鉴权
-sdk.request().then(res => { console.log(res) }).catch(err => { console.log(err) })
+sdk.request({ url: 'https://xiaoapp.io' }).then(res => { console.log(res) }).catch(err => { console.log(err) })
 ```
 
 ## secret key
@@ -76,10 +76,10 @@ licenseObject说明如下：
 
 |名称        | 类型 |说明|
 |-----------|---- | --- |
-|cooldown|   Integer | 下次进行 license check 前至少等待的时间长度，该字段表示一个时间长度 |
+|cooldown|   Integer | 下次进行 license check 前至少等待的时间长度，该字段表示一个时间长度，单位：秒 |
 |nextcheck  |Integer| 下次校验 license 时间，该字段为一个时间戳 |
-|notbefore |Integer| license 开始生效时间，该字段为一个时间戳 |
-|notafter   |Integer| 下次校验 license 时间 |
+|not_before |Integer| license 开始生效时间，该字段为一个时间戳 |
+|not_after   |Integer| license 过期时间，该字段为一个时间戳 |
 |plan_type   |String|付费的 plan 类型|
 
 
@@ -127,8 +127,19 @@ X-MiniApp-Plugin-Signature: {'appid': $APPID, 'license': ENCODED_LICENSE, 'nonce
 
 #### 参数
 
-和微信官方文档上的 [wx.request() API](https://developers.weixin.qq.com/miniprogram/dev/api/network-request.html) 保持一致。
+| 名称 | 类型 | 说明 |
+|------|-----|------|
+|forceSend|Boolean | 当 license 已过期时，是否继续发送请求，默认为 `false` |
+
+其他参数和微信官方文档上的 [wx.request() API](https://developers.weixin.qq.com/miniprogram/dev/api/network-request.html) 保持一致。
 
 #### 返回值
 `Promise.<any>`
 
+#### forceSend 示例
+```js
+sdk.isValid()   // ===> false
+sdk.request({ url: 'https://xiaoapp.io', forceSend: true }).then(res => { console.log(res) }) // request send success
+// ==============
+sdk.request({ url: 'https://xiaoapp.io' }).catch(err => { console.log(err.message) }) // throw error 'license 已过期'
+```
