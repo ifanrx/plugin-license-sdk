@@ -1,4 +1,4 @@
-import {innerRequest} from './request'
+import {requestWithoutSign} from './request'
 import config from './config'
 import constants from './constants'
 
@@ -8,7 +8,7 @@ import constants from './constants'
  * @returns {*}
  */
 export function getLicense() {
-  return innerRequest({
+  return requestWithoutSign({
     url: `${constants.API_HOST}/hserve/v1/license/?plugin_appid=${config.get('pluginId')}&appid=${config.get('appId')}`
   })
 }

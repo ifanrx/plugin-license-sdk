@@ -1,7 +1,7 @@
 import constants from './constants'
 import PError from './PError'
 
-export default {
+module.exports = {
   wxRequestFail: (reject) => {
     wx.getNetworkType({
       success: function (res) {
@@ -45,5 +45,18 @@ export default {
   },
   now() {
     return Math.floor(Date.now() / 1000)
+  },
+  checkPardon(now) {
+    const pardonTime = module.exports.storage.get(constants.PARDON_TIME_KEY)
+    if (!pardonTime) {
+      module.exports.storage.set(constants.PARDON_TIME_KEY, now)
+      return true
+    } else if ((parseInt(pardonTime) || 0) + constants.PARDON_TIME < now) {
+      module.exports.storage.remove(constants.PARDON_TIME_KEY)
+      return false
+    } else {
+      return true
+    }
   }
+
 }

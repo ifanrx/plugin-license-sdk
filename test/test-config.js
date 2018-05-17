@@ -40,7 +40,7 @@ module.exports = {
     get pardon() {
       return {
         'not_before': moment().subtract(1, 'days').unix(),
-        'not_after': moment().add(1, 'seconds').unix(),
+        'not_after': moment().unix(),
         'next_check': moment().add(1, 'days').unix(),
         'cooldown': 600,
         'plan_type': 'FREE',

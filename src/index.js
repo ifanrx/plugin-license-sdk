@@ -111,19 +111,19 @@ export class PluginSDK {
    */
   _isExpired() {
     const now = utils.now()
-    // 是否是宽限期
-    const pardonTime = utils.storage.get(constants.PARDON_TIME_KEY)
+    // 是否进入宽限期
     if (this._license.not_after >= now) {
-      return true
-    } else if (!pardonTime) {
-      utils.storage.set(constants.PARDON_TIME_KEY, now)
-      return true
-    } else if ((parseInt(pardonTime) || 0) + constants.PARDON_TIME < now) {
-      this._license._isValid = false
       utils.storage.remove(constants.PARDON_TIME_KEY)
-      return false
-    } else {
       return true
+    }
+
+    if (utils.checkPardon(now)) {
+      // 仍在宽限期
+      return true
+    } else {
+      // 超出宽限期
+      this._license._isValid = false
+      return false
     }
   }
 }

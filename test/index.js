@@ -3,7 +3,7 @@ import sinon from 'sinon'
 import crypto from 'crypto'
 import pluginSDK from '../src'
 import constants from '../src/constants'
-import request, {innerRequest} from '../src/request'
+import request, {requestWithoutSign, LICENSE_EXPIRED_MSG} from '../src/request'
 import utils from '../src/utils'
 import testConfig from './test-config'
 import * as API from '../src/api'
@@ -89,7 +89,7 @@ test.serial('#expired-during-lifecycle', t => {
     return new Promise(resolve => {
       setTimeout(() => {
         resolve(pluginSDK.isValid())
-      }, 2000) // licence 1000 毫秒后过期
+      }, 1020) // licence 1000 毫秒后过期
     })
   }).then((valid) => {
     t.true(valid)
@@ -126,7 +126,7 @@ test.serial('#updateLicence:avoid-frequently-call', t => {
 })
 
 // 测试请求发送， header 添加 SIGNATURE_KEY
-test.serial('#test-request', t => {
+test.serial('#test-request-with-sign', t => {
   return new Promise((resolve) => {
     sinon.stub(utils.storage, 'get').withArgs(constants.LICENSE_STORAGE_KEY).returns(JSON.stringify(testConfig.license.normal))
     sinon.stub(utils, 'randomString').returns(testConfig.randomString)
@@ -146,18 +146,52 @@ test.serial('#test-request', t => {
 })
 
 // 测试内部请求，内部请求的 header 不添加 SIGNATURE_KEY
-test.serial('#test-inner-request', t => {
+test.serial('#test-request-without-sign', t => {
   return new Promise((resolve) => {
     sinon.stub(wx, 'request').callsFake(function ({header}) {
       t.is(header[constants.SIGNATURE_KEY], undefined)
       resolve()
     })
 
-    innerRequest({})
+    requestWithoutSign({})
     wx.request.restore()
   })
 })
 
+test.serial('#test-force-send', t => {
+  const successData = 'ifanrx'
+  return new Promise((resolve) => {
+    sinon.stub(utils.storage, 'get').withArgs(constants.LICENSE_STORAGE_KEY).returns(JSON.stringify(testConfig.license.expired))
+    pluginSDK.init({appId, pluginId, secretKey, version}).then(() => {
+      sinon.stub(wx, 'request').yieldsTo('success', {statusCode: 200, data: successData})
+      pluginSDK.isValid(valid => t.false(valid)).then(() => {
+        request({forceSend: true}).then(res => {
+          t.is(res.data, successData)
+          wx.request.restore()
+          utils.storage.get.restore()
+          resolve()
+        })
+      })
+    })
+  })
+})
+
+test.serial('#test-disable-force-send', t => {
+  return new Promise((resolve) => {
+    sinon.stub(utils.storage, 'get').withArgs(constants.LICENSE_STORAGE_KEY).returns(JSON.stringify(testConfig.license.expired))
+    // 宽限期
+    utils.storage.get.withArgs(constants.PARDON_TIME_KEY).returns(JSON.stringify(moment().subtract(60, 'minutes').unix()))
+    pluginSDK.init({appId, pluginId, secretKey, version}).then(() => {
+      pluginSDK.isValid(valid => t.false(valid)).then(() => {
+        request({}).catch(err => {
+          t.is(err.message, LICENSE_EXPIRED_MSG)
+          utils.storage.get.restore()
+          resolve()
+        })
+      })
+    })
+  })
+})
 
 // 测试随机生成 8 位字符
 test.serial('#random-string', t => {
