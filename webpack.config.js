@@ -7,7 +7,7 @@ module.exports = {
   mode,
   entry: './src/index.js',
   output: {
-    path: mode === 'development' ? path.join(__dirname, 'tmp/plugin') : 'dist',
+    path: mode === 'development' ? path.join(__dirname, 'tmp/plugin') : path.join(__dirname, 'dist'),
     filename: mode === 'development' ? 'sdk.dev.js' : `sdk-v${pkg.version}.js`,
     libraryTarget: 'commonjs2',
   },
