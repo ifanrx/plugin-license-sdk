@@ -143,3 +143,15 @@ sdk.request({ url: 'https://xiaoapp.io', forceSend: true }).then(res => { consol
 // ==============
 sdk.request({ url: 'https://xiaoapp.io' }).catch(err => { console.log(err.message) }) // throw error 'license 已过期'
 ```
+
+## 回调地址
+
+在 license 更变发生后，即调用主动推送 license change 到用户定义的服务器中。推送的 payload 为
+
+```
+{
+  "license": {"appid": $appid, "not_before": $notbefore, "not_after": $notafter, "plan_type": $plantype, "capabilities": [$cap]},
+  "customer": {"openid": $openid, "nickname": $nickname, "email": $proxyEmailAddress},
+  "payment": {"method": ALIPAY|WEPAY|..., "amount": $amount, "transaction_id": $gatewayTransactionID}
+}
+```
